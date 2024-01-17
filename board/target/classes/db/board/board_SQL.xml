@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.kr.board.service.impl.BoardMapper">
+	<select id="getList" resultType="boardVO">
+		select
+			board_no,
+			title,
+			writer,
+			regdate,
+			hitnum
+		from
+			board_jhi
+		order by board_no asc
+	</select>
+	
+		<select id="boardDetail" resultType="boardVO">
+		select
+			board_no,
+			title,
+			writer,
+			regdate,
+			hitnum,
+			content
+		from
+			board_jhi
+		where
+			board_no = #{boardNo}
+	</select>
+	
+	<delete id="boardDelete">
+		delete
+		from 
+			board_jhi
+		where	
+			board_no = #{boardNo}
+			
+	</delete>
+	
+	<insert id="boardInsert" parameterType="boardVO">
+		<selectKey keyProperty="board_no" resultType="int" order="BEFORE">
+			SELECT 
+				MAX(board_no) + 1
+			FROM
+				 board_jhi
+		</selectKey>	
+		
+		insert into board_jhi
+			(board_no, title, writer, regdate, content)	
+		values
+			(#{board_no}, #{title}, #{writer}, now(), #{content} )
+	</insert>
+
+	<update id="boardUpdate" parameterType="boardVO">
+		update
+			board_jhi
+		set
+			title=#{title},
+			writer=#{writer},
+			content=#{content},
+			regdate=now()
+		where
+			board_no = #{boardNo}
+			<!-- CAST (#{boardNO} AS INT)  -->
+	</update>
+	<update id="hitnum">
+		update
+			board_jhi
+		set
+			hitnum = hitnum + 1
+		where
+			board_no= #{boardNo}
+	</update>
+</mapper>
